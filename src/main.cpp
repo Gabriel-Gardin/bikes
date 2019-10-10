@@ -1,25 +1,30 @@
-#include <modules.h>
+#include <modules.h>  //Contém definições de variáveis globais, e inclusão de outras bibliotecas.
 
 void setup() {
   pinMode(radar_pin, INPUT);
   pinMode(ultrasonic_pin, INPUT);
   Serial.begin(9600); //USB
   SerialGPS.begin(9600); //TEST GPS.
-  //gsm_connect();  //Connect to GPRS
+  //delay(1000);
+  gsm_connect_func();  //Connect to GPRS
+  
 
-  while(!Serial) { ; } //WAIT FOR SERIAL USB.
-  Serial.print("\nTEST SOMETHING\n\n");
+//  while(!Serial) { ; } //WAIT FOR SERIAL USB.
+//  Serial.print("\nTEST SOMETHING\n\n");
  
 }
 
 void loop()
 {
   String * received_gps;
-
   float dist = get_distance();
   Serial.print("Distancia ");
   Serial.println(dist);
   Serial.println();
+  delay(500);
+
+  Serial.print("Is connected: ");
+  Serial.println(gprs.getIPAddress());
   delay(500);
 
   Serial.print("Velocidade: ");
@@ -75,8 +80,8 @@ float get_cars_speed()
       float speed_read = Freq/doppler_div;
       return(speed_read);
     }
-    bool newData = false;
-    unsigned long chars;
+  //  bool newData = false;
+  //  unsigned long chars;
   }
 }
 
@@ -85,8 +90,8 @@ String * gps_data()
   static String gps_data[4];
 
   bool newData = false;
-  unsigned long chars;
-  // For one second we parse GPS data and report some key values
+  //unsigned long chars;
+  // Espera 0.5s para garantir que recebeu todos os dados pela serial do modulo de GPS.
   for (unsigned long start = millis(); millis() - start < 500;)
   {
     if (SerialGPS.available())
@@ -103,8 +108,8 @@ String * gps_data()
       unsigned long age;
       gps.f_get_position(&flat, &flon, &age);
       bike_speed = gps.f_speed_kmph();
-      flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flat, 6;
-      flon == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon, 6;
+      flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flat;
+      flon == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon;
       int satelite_number = gps.satellites();
       satelite_number == TinyGPS::GPS_INVALID_SATELLITES ? 0 : satelite_number;
       //Serial.print(gps.hdop() == TinyGPS::GPS_INVALID_HDOP ? 0 : gps.hdop());
@@ -134,23 +139,21 @@ float get_distance()
 
 }
 
-void gsm_connect(){
+void gsm_connect_func(){
+  Serial.println("cheguei aqui");
   //Enter Your SIM Card details below
-  char pin[] = "";
-  char apn[] = "timbrasil.br";
-  char login[] = "";
-  char pwd[] = "tim";
+  const char pin[] = "";
+  const char apn[] = "timbrasil.br";
+  const char login[] = "";
+  const char pwd[] = "tim";
   
-  GSMClient client;
-  GPRS gprs;
-  GSM gsmAccess;
-  
-  boolean connected = false;
+  bool connected = false;
   
   while (!connected) 
   {
     if ((gsmAccess.begin(pin) == GSM_READY) && (gprs.attachGPRS(apn, login, pwd) == GPRS_READY)) 
     {
+      Serial.println("cheguei aqui22");
       connected = true;
     } 
     else 
