@@ -1,4 +1,9 @@
 #include <modules.h>  //Contém definições de variáveis globais, e inclusão de outras bibliotecas.
+/* Código fonte do projeto das bikes.
+   Todas as bibliotecas usadas estão no diretório /lib do projeto afim de manter a compatibilidade com o código, mesmo se compilado em outros computadores.
+   Utiliza arduino MKR 1400 na IDE Vs Code e PlatformIO. 
+*/
+
 
 void setup() {
   pinMode(radar_pin, INPUT);
@@ -7,11 +12,7 @@ void setup() {
   SerialGPS.begin(9600); //TEST GPS.
   //delay(1000);
   gsm_connect_func();  //Connect to GPRS
-  
 
-//  while(!Serial) { ; } //WAIT FOR SERIAL USB.
-//  Serial.print("\nTEST SOMETHING\n\n");
- 
 }
 
 void loop()
@@ -56,7 +57,7 @@ float get_cars_speed()
   }
   interrupts();
 
-  // Check for consistency
+  // Verfica se os dados são válidos.
   bool samples_ok = true;
   unsigned int nbPulsesTime = samples[0];
   for (x = 1; x < AVERAGE; x++)
@@ -71,17 +72,9 @@ float get_cars_speed()
     {
       unsigned int Ttime = nbPulsesTime / AVERAGE;
       unsigned int Freq = 1000000 / Ttime;
-      //Serial.prit(Ttime);
-      //Serial.print("\r\n");
-      //Serial.print(Freq);
-      //Serial.print("Hz : ");
-      //Serial.print(Freq/doppler_div);
-      //Serial.print("km/h\r\n");
       float speed_read = Freq/doppler_div;
       return(speed_read);
     }
-  //  bool newData = false;
-  //  unsigned long chars;
   }
 }
 
@@ -90,7 +83,6 @@ String * gps_data()
   static String gps_data[4];
 
   bool newData = false;
-  //unsigned long chars;
   // Espera 0.5s para garantir que recebeu todos os dados pela serial do modulo de GPS.
   for (unsigned long start = millis(); millis() - start < 500;)
   {
@@ -119,9 +111,6 @@ String * gps_data()
       gps_data[2] = satelite_number;
       gps_data[3] = bike_speed;
 
-//      Serial.print("BIKE SPEEDDDD = ");
-//      Serial.println(bike_speed);
-//      delay(1000);
       return(gps_data);
     }
   }
@@ -129,7 +118,7 @@ String * gps_data()
 
 float get_distance()
 {
-  noInterrupts();
+  noInterrupts(); //DEsabilita interrupções para não afetar a leitura da duração do pulso.
   ultrasonic_pulse = pulseIn(ultrasonic_pin, HIGH);  
   //ultrasonic_pulse += pulseIn(ultrasonic_pin, LOW);    
   interrupts();
@@ -140,25 +129,24 @@ float get_distance()
 }
 
 void gsm_connect_func(){
-  Serial.println("cheguei aqui");
-  //Enter Your SIM Card details below
+
+  //Configurações para o GPRS da tim.
   const char pin[] = "";
   const char apn[] = "timbrasil.br";
   const char login[] = "";
   const char pwd[] = "tim";
-  
+
   bool connected = false;
   
   while (!connected) 
   {
     if ((gsmAccess.begin(pin) == GSM_READY) && (gprs.attachGPRS(apn, login, pwd) == GPRS_READY)) 
     {
-      Serial.println("cheguei aqui22");
       connected = true;
     } 
     else 
     {
-      Serial.println("Status: Could Not Connect to the Network!!!");
+      Serial.println("Falha na conexão!!!");
       delay(1000);
     }
   }
