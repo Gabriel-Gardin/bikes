@@ -42,15 +42,17 @@ void loop()
   {
     check_time = millis();
     car_speed = get_cars_speed();
-    if(car_speed > 5)
+    while(millis() - check_time < 10){}//Faz uma pausa de 10 ms
+    car_speed += get_cars_speed(); //Soma para tirar a média de dois valores
+    if(car_speed/2 > 5)
     {
       car_distance = get_distance();
-      car_speed = get_cars_speed();
+      //car_speed = get_cars_speed(); 
       if(car_distance < 100)
       {
         received_gps = get_gps_data();
         Serial.print("Send: ");
-        send = send_data(car_speed, car_distance, received_gps);
+        send = send_data((car_speed/2), car_distance, received_gps);
         delay(100);
 
         if(send == 1)
@@ -79,17 +81,22 @@ void loop()
 
 int send_data(float speed, float distance, String *gpss)
 {
-//  Serial.print("speed");
-//  Serial.println(speed);
-//  Serial.print("distnace");
-//  Serial.println(distance);
+  //Define um objeto utilizando a lib json para enviar os dados via mqtt. 165 é a RAM separada para alocar os dados.
+  DynamicJsonDocument mqtt_json_data(165);
+
+  mqtt_json_data.clear(); //Limpa o payload do json toda vez. 
   mqtt_json_data["Distância"] = distance;
   mqtt_json_data["Car_speed"] = speed;
+  
+  //Add um array ao mqtt_data. Dados do gps
+  JsonArray gps_json_data = mqtt_json_data.createNestedArray("GPS_DATA"); 
 
   for(int i = 0; i < 4; i++)
   {
     gps_json_data.add(gpss[i]);
- //   Serial.println(gpss[i]);
+    Serial.println(gpss[i]);
+  //  gpss[i] = NULL;
+  //  Serial.println(gpss[i]);
   }
 
   char data[512];
@@ -155,14 +162,14 @@ String *get_gps_data()
   }
     if (newData)
     {
-      float flat, flon;
+      float flat, flon, satelite_number, bike_speed;
 
       if(gps.location.isValid())
       {
         flat = gps.location.lat();
         flon = gps.location.lng();
         bike_speed = gps.speed.kmph();
-        int satelite_number = gps.satellites.value();
+        satelite_number = gps.satellites.value();
 /*
         Serial.print("latitude: ");
         Serial.println(flat, 6);
@@ -171,9 +178,15 @@ String *get_gps_data()
 
         gps_data[0] = flat * 1000000;
         gps_data[1] = flon * 1000000;
-        gps_data[2] = satelite_number;
-        gps_data[3] = bike_speed;
+        gps_data[2] = bike_speed;
+        gps_data[3] = satelite_number;
 
+        //Serial.print("satelite: ");
+        //Serial.println(satelite_number);
+        //Serial.print("bike speed: ");
+        //Serial.print(bike_speed);
+        //delay(1);
+        //delay(10);
         return(gps_data);
       }
     }

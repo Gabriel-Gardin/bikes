@@ -11,12 +11,6 @@ GSMClient client;
 GPRS gprs;
 GSM gsmAccess;
 
-//Define um objeto utilizando a lib json para enviar os dados via mqtt. 120 é a RAM separada para alocar os dados.
-StaticJsonDocument<120> mqtt_json_data;
-
-//Add um array ao mqtt_data. Dados do gps
-JsonArray gps_json_data = mqtt_json_data.createNestedArray("GPS_Data"); 
-
 //tópico do MQTT 
 char* mqtttopic = "/ctu/bike1";
 
@@ -81,7 +75,6 @@ unsigned int doppler_div = 44;
 unsigned int samples[AVERAGE];
 unsigned int x;
 unsigned int ultrasonic_pulse;
-float bike_speed;
 
 unsigned long previousTest;
 bool mGPS_got_line = false, mGPS_paused = false;
