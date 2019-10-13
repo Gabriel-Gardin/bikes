@@ -156,24 +156,26 @@ String *get_gps_data()
     if (newData)
     {
       float flat, flon;
-      unsigned long age;
-      gps.f_get_position(&flat, &flon, &age);
-      bike_speed = gps.f_speed_kmph();
-      flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flat;
-      flon == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon;
-      int satelite_number = gps.satellites();
-      satelite_number == TinyGPS::GPS_INVALID_SATELLITES ? 0 : satelite_number;
-      //Serial.print(gps.hdop() == TinyGPS::GPS_INVALID_HDOP ? 0 : gps.hdop());
 
-      char convert_flat[16];
-      sprintf(convert_flat,"%f", flat);
+      if(gps.location.isValid())
+      {
+        flat = gps.location.lat();
+        flon = gps.location.lng();
+        bike_speed = gps.speed.kmph();
+        int satelite_number = gps.satellites.value();
+/*
+        Serial.print("latitude: ");
+        Serial.println(flat, 6);
+        Serial.print("longitude: ");
+        Serial.println(flon, 6);*/
 
-      gps_data[0] = flat;
-      gps_data[1] = flon;
-      gps_data[2] = satelite_number;
-      gps_data[3] = bike_speed;
+        gps_data[0] = flat * 1000000;
+        gps_data[1] = flon * 1000000;
+        gps_data[2] = satelite_number;
+        gps_data[3] = bike_speed;
 
-      return(gps_data);
+        return(gps_data);
+      }
     }
   }
 }

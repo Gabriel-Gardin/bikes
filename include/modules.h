@@ -1,11 +1,11 @@
 //***********INCLUDES*********
 #include <Arduino.h>
-#include "TinyGPS.h"
+#include <TinyGPS++.h>
 #include <MKRGSM.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 
-TinyGPS gps;
+TinyGPSPlus gps;
  
 GSMClient client;
 GPRS gprs;
