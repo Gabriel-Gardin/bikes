@@ -9,7 +9,6 @@ void setup() {
   pinMode(ultrasonic_pin, INPUT);
   Serial.begin(9600); //USB
   SerialGPS.begin(9600); //TEST GPS.
-  //delay(1000);
   gsm_connect_func();  //Connect to GPRS
 }
 
@@ -21,16 +20,16 @@ void loop()
 
   String * received_gps;
 
-  if(millis() - mqtt_time_send > 2000) //Se não houve nenhum evento de carros em 15s envia a posição do gps com velocidade e distancia 0
+  if(millis() - mqtt_time_send > 2000) //Se não houve nenhum evento de carros em 2s envia a posição do gps com velocidade e distancia 0. Na prática leva em torno de 11s devido as outras funções. 
   {
     received_gps = get_gps_data();
     car_speed = 0;
     car_distance = 0;
     send = send_data(car_speed, car_distance, received_gps);
+    delay(100); //Trocar para millis?
     if(send == 1)
     {
       mqtt_time_send = millis();
-      delay(100); //Trocar para millis?
     }
     else
     {
@@ -95,8 +94,6 @@ int send_data(float speed, float distance, String *gpss)
   {
     gps_json_data.add(gpss[i]);
     Serial.println(gpss[i]);
-  //  gpss[i] = NULL;
-  //  Serial.println(gpss[i]);
   }
 
   char data[512];
@@ -112,12 +109,12 @@ int send_data(float speed, float distance, String *gpss)
 float get_cars_speed()
 {
   noInterrupts();
-  pulseIn(radar_pin, HIGH, 100000);
+  pulseIn(radar_pin, HIGH, 150000);
   unsigned int pulse_length = 0;
   for (x = 0; x < AVERAGE; x++)
   {
-    pulse_length = pulseIn(radar_pin, HIGH); 
-    pulse_length += pulseIn(radar_pin, LOW);    
+    pulse_length = pulseIn(radar_pin, HIGH, 150000); 
+    pulse_length += pulseIn(radar_pin, LOW, 150000);    
     samples[x] =  pulse_length;
   }
   interrupts();
@@ -170,23 +167,12 @@ String *get_gps_data()
         flon = gps.location.lng();
         bike_speed = gps.speed.kmph();
         satelite_number = gps.satellites.value();
-/*
-        Serial.print("latitude: ");
-        Serial.println(flat, 6);
-        Serial.print("longitude: ");
-        Serial.println(flon, 6);*/
 
         gps_data[0] = flat * 1000000;
         gps_data[1] = flon * 1000000;
         gps_data[2] = bike_speed;
         gps_data[3] = satelite_number;
 
-        //Serial.print("satelite: ");
-        //Serial.println(satelite_number);
-        //Serial.print("bike speed: ");
-        //Serial.print(bike_speed);
-        //delay(1);
-        //delay(10);
         return(gps_data);
       }
     }
