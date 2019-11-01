@@ -1,0 +1,80 @@
+{
+    "configurations": [
+        {
+            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/include",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/src",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/MKRGSM/src",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/pubsubclient/src",
+                "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/Wire",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/TinyGPSPlus/src",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/ArduinoJson-6.x/src",
+                "/home/gardin/.platformio/packages/framework-arduinosam/cores/samd",
+                "/home/gardin/.platformio/packages/framework-arduinosam/system/samd/CMSIS/CMSIS/Include",
+                "/home/gardin/.platformio/packages/framework-arduinosam/system/samd/CMSIS-Atmel/CMSIS/Device/ATMEL",
+                "/home/gardin/.platformio/packages/framework-arduinosam/variants/mkrgsm1400",
+                "/home/gardin/.platformio/lib/PID_ID2",
+                "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/HID",
+                "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/I2S/src",
+                "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/SAMD_AnalogCorrection/src",
+                "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/SAMD_BootloaderUpdater/src",
+                "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/SDU/src",
+                "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/SPI",
+                "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/USBHost/src",
+                "/home/gardin/.platformio/packages/tool-unity",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/include",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/src",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/MKRGSM/src",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/pubsubclient/src",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/Wire",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/TinyGPSPlus/src",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/ArduinoJson-6.x/src",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/cores/samd",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/system/samd/CMSIS/CMSIS/Include",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/system/samd/CMSIS-Atmel/CMSIS/Device/ATMEL",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/variants/mkrgsm1400",
+                    "/home/gardin/.platformio/lib/PID_ID2",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/HID",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/I2S/src",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/SAMD_AnalogCorrection/src",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/SAMD_BootloaderUpdater/src",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/SDU/src",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/SPI",
+                    "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/USBHost/src",
+                    "/home/gardin/.platformio/packages/tool-unity",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=40003",
+                "ARDUINO_SAMD_MKRGSM1400",
+                "ARDUINO_ARCH_SAMD",
+                "__SAMD21G18A__",
+                "USE_BQ24195L_PMIC",
+                "USE_ARDUINO_MKR_PIN_LAYOUT",
+                "F_CPU=48000000L",
+                "USBCON",
+                "ARDUINO=10805",
+                "USB_VID=0x2341",
+                "USB_PID=0x8052",
+                "USB_PRODUCT=\"Arduino MKR GSM 1400\"",
+                "USB_MANUFACTURER=\"Arduino\"",
+                ""
+            ],
+            "intelliSenseMode": "clang-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "\"/home/gardin/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc\" -mthumb -mcpu=cortex-m0plus"
+        }
+    ],
+    "version": 4
+}
