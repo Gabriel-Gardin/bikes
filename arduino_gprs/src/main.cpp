@@ -5,22 +5,24 @@
 */
 
 void setup() {
-  pinMode(radar_pin, INPUT);
   pinMode(ultrasonic_pin, INPUT);
+  Wire.begin(8);                          //Begins I2C communication with Slave Address as 8 at pin (A4,A5)
+  Wire.onReceive(receiveEvent);   
   Serial.begin(9600); //USB
   SerialGPS.begin(9600); //TEST GPS.
   gsm_connect_func();  //Connect to GPRS
 }
 
 void loop()
-{//CHECAR O TEMPO DESDE A ULTIMA VEZ QUE LI OS SENSORES
-  float car_distance = 0;
-  float car_speed = 0;
-  int send;
-
+{
+  //CHECAR O TEMPO DESDE A ULTIMA VEZ QUE LI OS SENSORES
   String * received_gps;
 
-  if(millis() - mqtt_time_send > 2000) //Se não houve nenhum evento de carros em 2s envia a posição do gps com velocidade e distancia 0. Na prática leva em torno de 11s devido as outras funções. 
+  float car_distance;
+  uint8_t car_speed;
+  int send;
+
+  if(millis() - mqtt_time_send > 3000) //Se não houve nenhum evento de carros em 3s envia a posição do gps com velocidade e distancia 0. Na prática leva em torno de 11s devido as outras funções. 
   {
     received_gps = get_gps_data();
     car_speed = 0;
@@ -36,39 +38,32 @@ void loop()
       mqtt_reconect();
     }
   }
-
-  if(millis() - check_time > 100)
+  else if(get_data)
   {
-    check_time = millis();
-    car_speed = get_cars_speed();
-    while(millis() - check_time < 10){}//Faz uma pausa de 10 ms
-    car_speed += get_cars_speed(); //Soma para tirar a média de dois valores
-    if(car_speed/2 > 5)
+    car_speed = SlaveReceived;
+    car_distance = get_distance();
+    Serial.print("Distanciaaaaaaaaaaaaa: ");
+    Serial.println(car_distance);
+    received_gps = get_gps_data();
+    Serial.print("Send: ");
+    send = send_data(car_speed, car_distance, received_gps);
+    delay(100);
+
+    if(send == 1)
     {
-      car_distance = get_distance();
-      //car_speed = get_cars_speed(); 
-      if(car_distance < 100)
-      {
-        received_gps = get_gps_data();
-        Serial.print("Send: ");
-        send = send_data((car_speed/2), car_distance, received_gps);
-        delay(100);
-
-        if(send == 1)
-        {
-          mqtt_time_send = millis();
-        }
-        else
-        {
-          mqtt_reconect();
-        }
-
-        Serial.println(send);
-        Serial.print("IP: ");
-        Serial.println(gprs.getIPAddress());
-      }
+      mqtt_time_send = millis();
     }
+    else
+    {
+      mqtt_reconect();
+    }
+
+    //Serial.println(send);
+    //Serial.print("IP: ");
+    //Serial.println(gprs.getIPAddress());
+    get_data = false;
   }
+  
 /*  Ao invés de manter a conexão desestabiliza, perdendo a conexão. Vai entender.
   if(!mqttclient.loop())
   {
@@ -78,7 +73,7 @@ void loop()
 }
 
 
-int send_data(float speed, float distance, String *gpss)
+int send_data(double speed, float distance, String *gpss)
 {
   //Define um objeto utilizando a lib json para enviar os dados via mqtt. 165 é a RAM separada para alocar os dados.
   DynamicJsonDocument mqtt_json_data(165);
@@ -93,7 +88,7 @@ int send_data(float speed, float distance, String *gpss)
   for(int i = 0; i < 4; i++)
   {
     gps_json_data.add(gpss[i]);
-    Serial.println(gpss[i]);
+    //Serial.println(gpss[i]);
   }
 
   char data[512];
@@ -104,42 +99,6 @@ int send_data(float speed, float distance, String *gpss)
 //  if(send_state == 0){gsm_connect_func();}
   return(send_state);
 }
-
-
-float get_cars_speed()
-{
-  noInterrupts();
-  pulseIn(radar_pin, HIGH, 150000);
-  unsigned int pulse_length = 0;
-  for (x = 0; x < AVERAGE; x++)
-  {
-    pulse_length = pulseIn(radar_pin, HIGH, 150000); 
-    pulse_length += pulseIn(radar_pin, LOW, 150000);    
-    samples[x] =  pulse_length;
-  }
-  interrupts();
-
-  // Verfica se os dados são válidos.
-  bool samples_ok = true;
-  unsigned int nbPulsesTime = samples[0];
-  for (x = 1; x < AVERAGE; x++)
-  {
-    nbPulsesTime += samples[x];
-    if ((samples[x] > samples[0] * 2) || (samples[x] < samples[0] / 2))
-    {
-      samples_ok = false;
-    }
-
-    if (samples_ok)
-    {
-      unsigned int Ttime = nbPulsesTime / AVERAGE;
-      unsigned int Freq = 1000000 / Ttime;
-      float speed_read = Freq/doppler_div;
-      return(speed_read);
-    }
-  }
-}
-
 
 String *get_gps_data()
 {
@@ -185,14 +144,10 @@ float get_distance()
   ultrasonic_pulse = pulseIn(ultrasonic_pin, HIGH);  
   //ultrasonic_pulse += pulseIn(ultrasonic_pin, LOW);    
   interrupts();
-  //Serial.print("pulse ");
-  //Serial.println(ultrasonic_pulse);
   return(ultrasonic_pulse/(58.0)); //Retorna a distância em centimetros. 
-
 }
 
 void gsm_connect_func(){
-
   //Configurações para o GPRS da tim.
   const char pin[] = "";
   const char apn[] = "timbrasil.br";
@@ -207,6 +162,7 @@ void gsm_connect_func(){
     {
       mqttclient.setServer(mqttserver, 1883);
       if (mqttclient.connect("arduinoclient", mqttUser, mqttPassword )) {
+        Serial.println("COnectado");
         connected = true;
       }
       else{
@@ -234,5 +190,11 @@ void mqtt_reconect()
   {
     gsm_connect_func();
   }
-  
+}
+
+void receiveEvent(int howMany){
+  SlaveReceived = Wire.read();
+  Serial.print("data: ");
+  Serial.println(SlaveReceived);
+  get_data = true;
 }
