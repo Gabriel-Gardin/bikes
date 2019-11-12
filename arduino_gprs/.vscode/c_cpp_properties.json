@@ -6,13 +6,13 @@
         {
             "name": "Linux",
             "includePath": [
-                "/home/gardin/Documents/PlatformIO/Projects/bikes/include",
-                "/home/gardin/Documents/PlatformIO/Projects/bikes/src",
-                "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/MKRGSM/src",
-                "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/pubsubclient/src",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/include",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/src",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/lib/MKRGSM/src",
                 "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/Wire",
-                "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/TinyGPSPlus/src",
-                "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/ArduinoJson-6.x/src",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/lib/TinyGPSPlus/src",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/lib/pubsubclient/src",
+                "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/lib/ArduinoJson-6.x/src",
                 "/home/gardin/.platformio/packages/framework-arduinosam/cores/samd",
                 "/home/gardin/.platformio/packages/framework-arduinosam/system/samd/CMSIS/CMSIS/Include",
                 "/home/gardin/.platformio/packages/framework-arduinosam/system/samd/CMSIS-Atmel/CMSIS/Device/ATMEL",
@@ -31,13 +31,13 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/gardin/Documents/PlatformIO/Projects/bikes/include",
-                    "/home/gardin/Documents/PlatformIO/Projects/bikes/src",
-                    "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/MKRGSM/src",
-                    "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/pubsubclient/src",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/include",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/src",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/lib/MKRGSM/src",
                     "/home/gardin/.platformio/packages/framework-arduinosam/libraries/__cores__/samd/Wire",
-                    "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/TinyGPSPlus/src",
-                    "/home/gardin/Documents/PlatformIO/Projects/bikes/lib/ArduinoJson-6.x/src",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/lib/TinyGPSPlus/src",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/lib/pubsubclient/src",
+                    "/home/gardin/Documents/PlatformIO/Projects/bikes/arduino_gprs/lib/ArduinoJson-6.x/src",
                     "/home/gardin/.platformio/packages/framework-arduinosam/cores/samd",
                     "/home/gardin/.platformio/packages/framework-arduinosam/system/samd/CMSIS/CMSIS/Include",
                     "/home/gardin/.platformio/packages/framework-arduinosam/system/samd/CMSIS-Atmel/CMSIS/Device/ATMEL",
@@ -55,7 +55,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=40003",
+                "PLATFORMIO=40100",
                 "ARDUINO_SAMD_MKRGSM1400",
                 "ARDUINO_ARCH_SAMD",
                 "__SAMD21G18A__",
