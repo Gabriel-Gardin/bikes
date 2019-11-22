@@ -1,6 +1,6 @@
-3#include <Arduino.h>
+#include <Arduino.h>
 #include "arduinoFFT.h"
-#include<Wire.h>
+#include "Wire.h"
  
 #define SAMPLES 1024            //Must be a power of 2
 #define SAMPLING_FREQUENCY 40000 //Hz, must be less than 10000 due to ADC
@@ -59,7 +59,7 @@ void loop() {
         data = vReal;
         xStatus = xQueueSend(fila1,(void *) &data, xTicksToWait);
     }
- //   vTaskDelay(1 / portTICK_PERIOD_MS);
+ //   vTaskDelay(1 / portTICK_0PERIOD_MS);
 }
 
 void fft_func(void * pvParameters)
@@ -92,7 +92,7 @@ void fft_func(void * pvParameters)
                 Serial.println(speed);
                 Wire.beginTransmission(8);                       // start transmit to slave arduino (8)
                 Wire.write((uint8_t) speed);                          // sends one byte converted POT value to slave
-                Serial.println(Wire.endTransmission());
+                Wire.endTransmission();
         //        delay(1);
             }
         }
