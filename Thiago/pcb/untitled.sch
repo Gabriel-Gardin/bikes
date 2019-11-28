@@ -20482,7 +20482,7 @@ W = angled&lt;p&gt;
 <segment>
 <pinref part="GPS" gate="1" pin="3"/>
 <wire x1="132.08" y1="149.86" x2="132.08" y2="144.78" width="0.1524" layer="91"/>
-<label x="132.08" y="142.24" size="1.778" layer="95" rot="R90"/>
+<label x="132.08" y="139.7" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="RESET" class="0">
@@ -20500,7 +20500,7 @@ W = angled&lt;p&gt;
 <segment>
 <pinref part="GPS" gate="1" pin="2"/>
 <wire x1="129.54" y1="149.86" x2="129.54" y2="144.78" width="0.1524" layer="91"/>
-<label x="129.54" y="142.24" size="1.778" layer="95" rot="R90"/>
+<label x="129.54" y="139.7" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="I2C_SCL" class="0">
@@ -20511,12 +20511,10 @@ W = angled&lt;p&gt;
 </segment>
 <segment>
 <pinref part="U$1" gate="G$1" pin="IO22"/>
-<wire x1="91.44" y1="45.72" x2="86.36" y2="45.72" width="0.1524" layer="91"/>
-<label x="86.36" y="45.72" size="1.778" layer="95"/>
+<label x="81.28" y="45.72" size="1.778" layer="95"/>
 <pinref part="R2" gate="G$1" pin="1"/>
-<wire x1="86.36" y1="45.72" x2="83.82" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="73.66" y1="55.88" x2="73.66" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="73.66" y1="45.72" x2="83.82" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="45.72" x2="91.44" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="I2C_SDA" class="0">

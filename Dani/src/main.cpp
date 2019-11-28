@@ -13,6 +13,7 @@ DHT dht(temp_pin, DHT22);
 void setup()
 {
   dht.begin();
+  analogReference(INTERNAL1V1);
   Serial.begin(9600);  //Comentar essa linha se não estiver debugando...
   Serial2.begin(9600); //Serial do GPS.
   LOG("iniciando o cartão");
