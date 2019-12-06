@@ -36,7 +36,7 @@ void setup() {
         xTaskCreatePinnedToCore(
             fft_func, /* Function to implement the task */
             "fft_fucn", /* Name of the task */
-            100000,  /* Stack size in words */
+            5000,  /* Stack size in words */
             NULL,  /* Task input parameter */
             0,  /* Priority of the task */
             &fft,  /* Task handle. */
@@ -87,9 +87,9 @@ void fft_func(void * pvParameters)
             double peak = FFT.MajorPeak(copy_data, SAMPLES, SAMPLING_FREQUENCY);
             speed = peak/44;
             //
-
-           if(speed > 15){
-                Serial.println(speed);
+            Serial.println(speed);
+            if(speed > 15){
+            //    Serial.println(speed);
                 Wire.beginTransmission(8);                       // start transmit to slave arduino (8)
                 Wire.write((uint8_t) speed);                          // sends one byte converted POT value to slave
                 Wire.endTransmission();
@@ -97,5 +97,6 @@ void fft_func(void * pvParameters)
             }
         }
     //vTaskDelay(1 / portTICK_PERIOD_MS);
+    //free((void *) received_data);
     }
 }
