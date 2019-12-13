@@ -17,26 +17,25 @@ QueueHandle_t fila1;
 //*************function_declaration****************
 void fft_func(void * parameter);
 
-double copy_data[SAMPLES];
-double vImag[SAMPLES];
 double speed;
 double vReal[SAMPLES];  //Armazena os dados. Global para os dois processadores.
 double *data;
+//double vImag[SAMPLES] = {0};
 
-uint32_t debugFlag = 0x001F0000;
+//uint32_t debugFlag = 0x001F0000;
 
 void setup() {
     Serial.begin(115200);
     Wire.begin();
    // Wire.setDebugFlags(debugFlag,0);// resetBits=0 says leave all current setBits as is.
     sampling_period_us = round(1000000*(1.0/SAMPLING_FREQUENCY));   
-    fila1 = xQueueCreate(2, sizeof(struct adc_data*));
+    fila1 = xQueueCreate(2, sizeof(vReal));
     if(fila1 != 0)
     {
         xTaskCreatePinnedToCore(
             fft_func, /* Function to implement the task */
             "fft_fucn", /* Name of the task */
-            5000,  /* Stack size in words */
+            20000,  /* Stack size in words */
             NULL,  /* Task input parameter */
             0,  /* Priority of the task */
             &fft,  /* Task handle. */
@@ -52,12 +51,14 @@ void loop() {
     {
         for(int i=0; i<SAMPLES; i++)
         {
-            microseconds = micros();
             vReal[i] = analogRead(34);
-            while(micros() < (microseconds + sampling_period_us)){}
+            //while(micros() < (microseconds + sampling_period_us)){}
+            delayMicroseconds(sampling_period_us);
         }
-        data = vReal;
-        xStatus = xQueueSend(fila1,(void *) &data, xTicksToWait);
+        data = &vReal[0]; //Aponta para o endereço do primeiro ítem do array. Equivalente a data = vReal
+				//Por mais que as queues do freertos passem os dados por cópia e não pro referencia, isto não é viável em grandes buffers, como é o 	    
+//caso						
+        xStatus = xQueueSend(fila1, (void *)&data, xTicksToWait);
     }
  //   vTaskDelay(1 / portTICK_0PERIOD_MS);
 }
@@ -65,6 +66,7 @@ void loop() {
 void fft_func(void * pvParameters)
 {
     double *received_data;
+    double copy_data[SAMPLES];
     BaseType_t xStatus;
     const TickType_t xTicksToWait = pdMS_TO_TICKS(1);
     Wire.begin();
@@ -75,20 +77,18 @@ void fft_func(void * pvParameters)
         xStatus = xQueueReceive(fila1, &received_data, xTicksToWait);
 
         if(xStatus == pdPASS){
-            for(int i = 0; i < SAMPLES; i++)
-            {
-                vImag[i] = 0;
-            }
-            memcpy(copy_data, received_data, sizeof(vReal));
+            double vImag[SAMPLES] = {0};
+            memcpy(copy_data, received_data, sizeof(vReal)); //Copio a data recebida pela queue, afim de liberar o uso da variável para task do loop...
+            //double *data1 = received_data;
             
             FFT.Windowing(copy_data, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
             FFT.Compute(copy_data, vImag, SAMPLES, FFT_FORWARD);
             FFT.ComplexToMagnitude(copy_data, vImag, SAMPLES);
             double peak = FFT.MajorPeak(copy_data, SAMPLES, SAMPLING_FREQUENCY);
             speed = peak/44;
-            //
+            
             Serial.println(speed);
-            if(speed > 15){
+            if(speed > 10){
             //    Serial.println(speed);
                 Wire.beginTransmission(8);                       // start transmit to slave arduino (8)
                 Wire.write((uint8_t) speed);                          // sends one byte converted POT value to slave
@@ -96,7 +96,7 @@ void fft_func(void * pvParameters)
         //        delay(1);
             }
         }
-    //vTaskDelay(1 / portTICK_PERIOD_MS);
+    //vTaskDelay(100);
     //free((void *) received_data);
     }
 }
