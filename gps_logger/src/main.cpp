@@ -12,7 +12,7 @@
 #include <SD.h>
 #include <TinyGPS++.h>
 
-#define DEBUG true
+#define DEBUG false
 #if DEBUG == true   //Mudar para false quando não estiver debugando por um computador... 
 #define LOG(x) Serial.print(x)
 #else
