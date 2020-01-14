@@ -31,7 +31,7 @@ unsigned long mqtt_time_send = 0;
 unsigned long check_time = 0;
 
 //Sinaliza se houve um evento de velocidade para pegar os outros parametros.
-bool get_data = false;
+volatile bool get_data = false;
 
 PubSubClient mqttclient(client); //Instância da classe do Pubcubcliente passando o construtor "client" do GSM
 
@@ -45,7 +45,7 @@ const uint8_t AVERAGE = 25;
 const uint8_t ultrasonic_pin = 4;
 
 //Dados recebido pelo i2c. Velocidade radar.
-uint8_t SlaveReceived;
+volatile uint8_t SlaveReceived;
 
 //Verifica os dados do GPS através da serial UART do módulo 6neo m e retorna um ponteiro para um array contendo 4 parametros; Latitude, Longitude, numero satelite, e a velocidade da BICICLETA. 
 String *get_gps_data();

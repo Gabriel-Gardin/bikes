@@ -3,12 +3,22 @@
    Todas as bibliotecas usadas estão no diretório /lib do projeto afim de manter a compatibilidade com o código, mesmo se compilado em outros computadores.
    Utiliza arduino MKR 1400 na IDE Vs Code e PlatformIO. 
 */
+#define DEBUG true
+
+#if DEBUG == true
+#define LOG(X) Serial.print(X);
+#else
+#define LOG(X)
+#endif
+
 
 void setup() {
   pinMode(ultrasonic_pin, INPUT);
   Wire.begin(8);                          //Begins I2C communication with Slave Address as 8 at pin (A4,A5)
-  Wire.onReceive(receiveEvent);   
-  Serial.begin(9600); //USB
+  Wire.onReceive(receiveEvent); 
+  #if DEBUG == true  
+    Serial.begin(9600); //Comentar
+  #endif
   SerialGPS.begin(9600); //TEST GPS.
   gsm_connect_func();  //Connect to GPRS
 }
@@ -42,10 +52,10 @@ void loop()
   {
     car_speed = SlaveReceived;
     car_distance = get_distance();
-    Serial.print("Distanciaaaaaaaaaaaaa: ");
-    Serial.println(car_distance);
+    LOG("Distancia:");
+    LOG(car_distance);
+    LOG("\n")
     received_gps = get_gps_data();
-    Serial.print("Send: ");
     send = send_data(car_speed, car_distance, received_gps);
     delay(100);
 
@@ -94,8 +104,9 @@ int send_data(double speed, float distance, String *gpss)
   char data[512];
   serializeJson(mqtt_json_data, data);
   int send_state = mqttclient.publish("/ctu/bike1", data);
-  Serial.print("MQTT STATE: ");
-  Serial.println(mqttclient.state());
+  LOG("MQTT STATE: ");
+  LOG(mqttclient.state());
+  LOG("\n")
 //  if(send_state == 0){gsm_connect_func();}
   return(send_state);
 }
@@ -162,17 +173,21 @@ void gsm_connect_func(){
     {
       mqttclient.setServer(mqttserver, 1883);
       if (mqttclient.connect("arduinoclient", mqttUser, mqttPassword )) {
-        Serial.println("COnectado");
+        LOG("COnectado");
+        LOG("\n");
         connected = true;
       }
       else{
-        Serial.println("Falha ao conectar no broker!!");
-        Serial.println(mqttclient.state());
+        LOG("Falha ao conectar no broker!!");
+        LOG("\n");
+        LOG(mqttclient.state());
+        LOG("\n");
       }
     } 
     else 
     {
-      Serial.println("Falha na conexão GPRS!!!");
+      LOG("Falha na conexão GPRS!!!");
+      LOG("\n");
       delay(1000);
     }
   }
@@ -180,7 +195,8 @@ void gsm_connect_func(){
 
 void mqtt_reconect()
 {
-  Serial.println("Reconectando");
+  LOG("Reconectando");
+  LOG("\n");
   if(gprs.status() == GPRS_READY)
   {
     mqttclient.connect("arduinoclient", mqttUser, mqttPassword);
@@ -194,7 +210,8 @@ void mqtt_reconect()
 
 void receiveEvent(int howMany){
   SlaveReceived = Wire.read();
-  Serial.print("data: ");
-  Serial.println(SlaveReceived);
+  //LOG("data: ");
+  //LOG(SlaveReceived);
+  //LOG("\n");
   get_data = true;
 }
