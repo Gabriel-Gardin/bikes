@@ -3,7 +3,7 @@
    Todas as bibliotecas usadas estão no diretório /lib do projeto afim de manter a compatibilidade com o código, mesmo se compilado em outros computadores.
    Utiliza arduino MKR 1400 na IDE Vs Code e PlatformIO. 
 */
-#define DEBUG true
+#define DEBUG false
 
 #if DEBUG == true
 #define LOG(X) Serial.print(X);
@@ -32,7 +32,7 @@ void loop()
   uint8_t car_speed;
   int send;
 
-  if(millis() - mqtt_time_send > 3000) //Se não houve nenhum evento de carros em 3s envia a posição do gps com velocidade e distancia 0. Na prática leva em torno de 11s devido as outras funções. 
+  if(millis() - mqtt_time_send > 10000) //Caso não tenha enviados dados em 10s atualiza a posição do gps.
   {
     received_gps = get_gps_data();
     car_speed = 0;

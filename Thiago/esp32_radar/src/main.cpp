@@ -3,7 +3,7 @@
 #include "Wire.h"
  
 #define SAMPLES 1024            //Deve ser um número na base 2
-#define SAMPLING_FREQUENCY 40000 //Frequencia da amostragem do radar em Hz
+#define SAMPLING_FREQUENCY 55000 //Frequencia da amostragem do radar em Hz
  
 arduinoFFT FFT = arduinoFFT();
 
