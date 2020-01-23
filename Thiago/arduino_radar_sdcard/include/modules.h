@@ -30,7 +30,7 @@ float get_distance();
 void receiveEvent(int howMany);
 
 //Função que envia os dados para o servidor por mqtt.
-int save_data(double speed, float distance, String *gpss);
+int save_data(unsigned long on_time, double speed, float distance, String *gpss);
 
 unsigned long saved_time = 0;
 
@@ -40,3 +40,5 @@ unsigned int doppler_div = 44;
 
 //variáveis.
 unsigned int ultrasonic_pulse;
+
+unsigned long on_time = 0;

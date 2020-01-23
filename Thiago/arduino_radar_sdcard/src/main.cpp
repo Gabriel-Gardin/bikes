@@ -29,7 +29,7 @@ void setup() {
   
   if (dataFile)
   {
-    String data = "velocidade,distancia,latitude,longitude,bike_speed,satelite";
+    String data = "tempo_on,velocidade,distancia,latitude,longitude,bike_speed,satelite";
     dataFile.println(data);
     dataFile.close();
   }
@@ -57,7 +57,8 @@ void loop()
     received_gps = get_gps_data();
     car_speed = 0;
     car_distance = 0;
-    saved = save_data(car_speed, car_distance, received_gps);
+    on_time = millis();
+    saved = save_data(on_time, car_speed, car_distance, received_gps);
     delay(100); //Trocar para millis?
     if(saved == 1)
     {
@@ -73,11 +74,12 @@ void loop()
   {
     car_speed = SlaveReceived;
     car_distance = get_distance();
+    on_time = millis();
     LOG("Distancia:");
     LOG(car_distance);
     LOG("\n")
     received_gps = get_gps_data();
-    saved = save_data(car_speed, car_distance, received_gps);
+    saved = save_data(on_time, car_speed, car_distance, received_gps);
     delay(100);
 
     if(saved == 1)
@@ -94,13 +96,14 @@ void loop()
 }
 
 
-int save_data(double speed, float distance, String *gpss)
+int save_data(unsigned long on_time, double speed, float distance, String *gpss)
 {
+  String on_t = (String) on_time;
   String str_speed = (String) speed;
   String str_distance = (String) distance;
   char comma = ',';
 
-  String data = str_speed + comma +str_distance + comma + gpss[0] + comma + gpss[1] + comma + gpss[2] + comma + gpss[3];
+  String data = on_t + comma + str_speed + comma +str_distance + comma + gpss[0] + comma + gpss[1] + comma + gpss[2] + comma + gpss[3];
 
   File dataFile = SD.open("DATA.TXT", FILE_WRITE);
   
