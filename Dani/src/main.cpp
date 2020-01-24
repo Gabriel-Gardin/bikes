@@ -9,7 +9,10 @@
 #endif
  
 DHT dht(temp_pin, DHT22);
- 
+
+//Nome do protótipo. Salvo na primeira linha do arquivo.
+char myname[] = "Prototipo1";
+
 void setup()
 {
   dht.begin();
