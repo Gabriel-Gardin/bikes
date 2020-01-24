@@ -27,6 +27,7 @@ void setup()
   if (!SD.begin(chipSelect)) {
     LOG("Card failed, or not present");
   }
+  save_data(myname);
 }
  
 void loop()
