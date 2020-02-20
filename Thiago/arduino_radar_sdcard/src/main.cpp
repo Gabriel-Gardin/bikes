@@ -1,7 +1,7 @@
 #include <modules.h>  
 
 
-#define DEBUG true
+#define DEBUG false
 
 #if DEBUG == true
 #define LOG(X) Serial.print(X);
@@ -29,7 +29,7 @@ void setup() {
   
   if (dataFile)
   {
-    String data = "tempo_on,velocidade,distancia,latitude,longitude,bike_speed,satelite";
+    String data = "tempo_on,velocidade,distancia,latitude,longitude,bike_speed,hora";
     dataFile.println(data);
     dataFile.close();
   }
@@ -57,7 +57,7 @@ void loop()
     received_gps = get_gps_data();
     car_speed = 0;
     car_distance = 0;
-    on_time = millis();
+    on_time = millis()/1000;
     saved = save_data(on_time, car_speed, car_distance, received_gps);
     delay(100); //Trocar para millis?
     if(saved == 1)
@@ -74,7 +74,7 @@ void loop()
   {
     car_speed = SlaveReceived;
     car_distance = get_distance();
-    on_time = millis();
+    on_time = millis()/1000;
     LOG("Distancia:");
     LOG(car_distance);
     LOG("\n")
@@ -137,19 +137,24 @@ String *get_gps_data()
   }
     if (newData)
     {
-      float flat, flon, satelite_number, bike_speed;
+      float flat, flon, bike_speed;
+      String hours, minutes, seconds, time2;
 
       if(gps.location.isValid())
       {
         flat = gps.location.lat();
         flon = gps.location.lng();
         bike_speed = gps.speed.kmph();
-        satelite_number = gps.satellites.value();
+        
+        hours = (String)gps.time.hour();
+        minutes = (String)gps.time.minute();
+        seconds = (String)gps.time.second();
+        time2 = (hours + ":" + minutes + ":" + seconds);
 
         gps_data[0] = flat * 1000000;
         gps_data[1] = flon * 1000000;
         gps_data[2] = bike_speed;
-        gps_data[3] = satelite_number;
+        gps_data[3] = time2;
 
         return(gps_data);
       }
