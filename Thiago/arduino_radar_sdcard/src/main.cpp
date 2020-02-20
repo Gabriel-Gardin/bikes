@@ -1,7 +1,7 @@
 #include <modules.h>  
 
 
-#define DEBUG false
+#define DEBUG true
 
 #if DEBUG == true
 #define LOG(X) Serial.print(X);
@@ -9,6 +9,7 @@
 #define LOG(X)
 #endif
 
+String * received_gps;
 
 void setup() {
   
@@ -25,6 +26,8 @@ void setup() {
     LOG("Cartao iniciado com sucesso\n")
   }
   
+  delay(100);
+
   File dataFile = SD.open("DATA.TXT", FILE_WRITE);
   
   if (dataFile)
@@ -36,64 +39,52 @@ void setup() {
 
   Wire.onReceive(receiveEvent);
 
-  #if DEBUG == true  
-    Serial.begin(9600); //Comentar
-  #endif
-  
+  Serial.begin(9600); //Comentar
   SerialGPS.begin(9600); //TEST GPS.
 
+  received_gps = get_gps_data();
 }
 
 void loop()
 {
-  String * received_gps;
-
   float car_distance;
   uint8_t car_speed;
   int saved;
 
-  if(millis() - saved_time > 3000) //Caso não tenha enviados dados em 10s atualiza a posição do gps.
+  if(millis() - check_gps_time > 3000) //Atualiza o GPS a cada 3 segundos
   {
     received_gps = get_gps_data();
-    car_speed = 0;
-    car_distance = 0;
-    on_time = millis()/1000;
-    saved = save_data(on_time, car_speed, car_distance, received_gps);
-    delay(100); //Trocar para millis?
-    if(saved == 1)
-    {
-      saved_time = millis();
-    }
-    else
-    {
-      LOG("Erro ao salvar os dados\n");
-    }
+    check_gps_time = millis();
   }
 
-  else if(get_data)
+  if(get_data)
   {
     car_speed = SlaveReceived;
-    car_distance = get_distance();
-    on_time = millis()/1000;
-    LOG("Distancia:");
-    LOG(car_distance);
-    LOG("\n")
-    received_gps = get_gps_data();
-    saved = save_data(on_time, car_speed, car_distance, received_gps);
-    delay(100);
-
-    if(saved == 1)
-    {
-      LOG("Dados salvo com sucesso\n");
-    }
-    else
-    {
-      LOG("Erro ao salvar os dados");
-    }
-
     get_data = false;
   }
+  else
+  {
+    car_speed = 0;
+  }
+
+  car_distance = get_distance();
+  on_time = millis()/1000;
+  LOG("Distancia:");
+  LOG(car_distance);
+  LOG("\n")
+  saved = save_data(on_time, car_speed, car_distance, received_gps);
+  delay(100);
+
+  if(saved == 1)
+  {
+    LOG("Dados salvo com sucesso\n");
+  }
+  else
+  {
+    LOG("Erro ao salvar os dados");
+  }
 }
+
 
 
 int save_data(unsigned long on_time, double speed, float distance, String *gpss)
@@ -101,9 +92,18 @@ int save_data(unsigned long on_time, double speed, float distance, String *gpss)
   String on_t = (String) on_time;
   String str_speed = (String) speed;
   String str_distance = (String) distance;
+  String data;
   char comma = ',';
 
-  String data = on_t + comma + str_speed + comma +str_distance + comma + gpss[0] + comma + gpss[1] + comma + gpss[2] + comma + gpss[3];
+  if(gpss[0] != NULL)
+  {
+    data = on_t + comma + str_speed + comma +str_distance + comma + gpss[0] + comma + gpss[1] + comma + gpss[2] + comma + gpss[3];
+  }
+  else
+  {
+    data = on_t + comma + str_speed + comma +str_distance;
+  }
+  
 
   File dataFile = SD.open("DATA.TXT", FILE_WRITE);
   
@@ -139,7 +139,7 @@ String *get_gps_data()
     {
       float flat, flon, bike_speed;
       String hours, minutes, seconds, time2;
-
+  
       if(gps.location.isValid())
       {
         flat = gps.location.lat();
@@ -164,11 +164,16 @@ String *get_gps_data()
 
 float get_distance()
 {
-  noInterrupts(); //DEsabilita interrupções para não afetar a leitura da duração do pulso.
-  ultrasonic_pulse = pulseIn(ultrasonic_pin, HIGH);  
-  //ultrasonic_pulse += pulseIn(ultrasonic_pin, LOW);    
-  interrupts();
-  return(ultrasonic_pulse/(58.0)); //Retorna a distância em centimetros. 
+  analogReadResolution(12);
+  int analog_voltage = 0;
+  for(int i = 0; i < 5; i++)
+  {
+    analog_voltage += analogRead(A1);
+
+  }
+  analog_voltage = analog_voltage / 5;
+  float distance = ((analog_voltage * 3300) / 4096) / 3.2;
+  return(distance); //Retorna a distância em centimetros. 
 }
 
 void receiveEvent(int howMany){

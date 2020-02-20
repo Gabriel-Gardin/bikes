@@ -34,6 +34,10 @@ int save_data(unsigned long on_time, double speed, float distance, String *gpss)
 
 unsigned long saved_time = 0;
 
+unsigned long check_gps_time = 0;
+
+
+
 
 //Constante usada para converter a frequência do radar CDM324 em velocidade.
 unsigned int doppler_div = 44; 
