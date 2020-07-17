@@ -51,11 +51,11 @@ void loop()
   uint8_t car_speed;
   int saved;
 
-  if(millis() - check_gps_time > 3000) //Atualiza o GPS a cada 3 segundos
-  {
-    received_gps = get_gps_data();
-    check_gps_time = millis();
-  }
+  //if(millis() - check_gps_time > 3000) //Atualiza o GPS a cada 3 segundos
+  //{
+  received_gps = get_gps_data();
+  check_gps_time = millis();
+  //}
 
   if(get_data)
   {
